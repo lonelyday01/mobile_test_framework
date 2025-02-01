@@ -1,0 +1,21 @@
+server:
+  host: "http://127.0.0.1"
+  port: 4723
+  path: "/wd/hub"
+
+applications:
+  calculator:
+    app_package: "com.sec.android.app.popupcalculator"
+    app_activity: "com.sec.android.app.popupcalculator.Calculator"
+    noReset: False
+  camera:
+    app_package: "com.sec.android.app.camera"
+    app_activity: ".Camera"
+  messages:
+  contacts:
+  clock:
+    app_package: "com.sec.android.app.clockpackage"
+    app_activity: ".ClockPackage"
+    noReset: False
+    fullReset: False
+    dontStopAppOnReset: True

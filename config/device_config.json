@@ -1,0 +1,28 @@
+{
+  "devices": [
+    {
+      "deviceName": "Pixel_4_Emulator",
+      "platformName": "Android",
+      "platformVersion": "12.0",
+      "udid": "emulator-5554",
+      "osName": "Android",
+      "isPhysicalDevice": false
+    },
+    {
+      "deviceName": "Samsung S24 ultra",
+      "platformName": "Android",
+      "platformVersion": "14.0",
+      "udid": "R5CWC44NWZA",
+      "osName": "Android",
+      "isPhysicalDevice": true
+    },
+    {
+      "deviceName": "Motorola one zoom",
+      "platformName": "Android",
+      "platformVersion": "10.0",
+      "udid": "ZY226F4R27",
+      "osName": "Android",
+      "isPhysicalDevice": true
+    }
+  ]
+}
