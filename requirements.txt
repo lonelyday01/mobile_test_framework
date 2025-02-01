@@ -1,0 +1,5 @@
+appium-python-client
+slash
+selenium
+pytest
+requests
