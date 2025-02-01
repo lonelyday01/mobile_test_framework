@@ -4,6 +4,10 @@ from appium import webdriver
 from appium.options.android import UiAutomator2Options
 
 
+
+
+
+
 class AppiumDriverManagerError(Exception):
     """
     Custom exception for AppiumDriverManager errors.
@@ -111,8 +115,9 @@ class AppiumDriverManager:
         """
         try:
             self.driver = webdriver.Remote(command_executor=self.config["server"]["full_server_path"],
-                                           options=self.capabilities
+                                           options=self.options
             )
+            return self.driver
         except Exception as e:
             raise AppiumDriverManagerError("Unable to start driver") from e
 

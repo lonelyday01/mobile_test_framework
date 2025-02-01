@@ -13,17 +13,17 @@ capabilities:
 
 applications:
   calculator:
-    appPackage: "com.sec.android.app.popupcalculator"
-    appActivity: "com.sec.android.app.popupcalculator.Calculator"
+    appPackage: "com.google.android.calculator"
+    appActivity: "com.android.calculator2.Calculator"
     noReset: False
-  camera:
-    appPackage: "com.sec.android.app.camera"
-    appActivity: ".Camera"
-  messages:
-  contacts:
-  clock:
-    appPackage: "com.sec.android.app.clockpackage"
-    appActivity: ".ClockPackage"
-    noReset: False
-    fullReset: False
-    dontStopAppOnReset: True
+camera:
+  appPackage: "com.sec.android.app.camera"
+  appActivity: ".Camera"
+messages:
+contacts:
+clock:
+  appPackage: "com.sec.android.app.clockpackage"
+  appActivity: ".ClockPackage"
+  noReset: False
+  fullReset: False
+  dontStopAppOnReset: True
