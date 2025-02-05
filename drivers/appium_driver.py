@@ -2,10 +2,7 @@ import yaml
 import json
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
-
-
-
-
+from utils.system_utils import SystemUtils
 
 
 class AppiumDriverManagerError(Exception):
@@ -22,7 +19,7 @@ class AppiumDriverManager:
     This class reads configurations from YAML and JSON files, dynamically sets
     the desired capabilities, and initializes an Appium WebDriver session.
     """
-    def __init__(self, device_index=0, application="calculator"):
+    def __init__(self, device_index=None, application="calculator"):
         """
         Initializes the Appium driver manager.
 
@@ -35,7 +32,11 @@ class AppiumDriverManager:
         """
         self.config = self.load_yaml("config/appium_config.yaml")
         self.devices = self.load_json("config/device_config.json")["devices"]
-        self.device = self.devices[device_index]
+        # Get device automatically if device index isn't provided
+        if device_index is None:
+            self.device = self.get_device_from_adb()
+        else:
+            self.device = self.devices[device_index]
         self.application = self.config["applications"][application]
         if not self.application:
             raise AppiumDriverManagerError(f"Application '{application}' not found in appium_config.yaml")
@@ -77,6 +78,24 @@ class AppiumDriverManager:
         """
         with open(path, "r") as f:
             return json.load(f)
+
+    def get_device_from_adb(self):
+        """
+        Detects connected devices via ADB and selects the first one available.
+
+        Returns
+        -------
+        dict
+            The device configuration dictionary.
+        """
+        devices = SystemUtils.list_adb_devices()
+        if not devices:
+            raise AppiumDriverManagerError("No devices found via adb")
+
+        for device in self.devices:
+            if device["deviceName"] in devices:
+                return device
+        raise AppiumDriverManagerError("No matchin device found in device_config.json")
 
     def set_capabilities(self):
         """
