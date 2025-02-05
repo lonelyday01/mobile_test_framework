@@ -20,7 +20,15 @@ def driver():
     WebDriver
         The initialized Appium WebDriver instance.
     """
-    driver_manager = AppiumDriverManager(device_index=2, application="calculator")
+    driver_manager = AppiumDriverManager(application="calculator")
     driver_instance = driver_manager.start_driver()
     yield driver_instance
     driver_manager.stop_driver()
+
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_protocol(item):
+    """
+    Hook to capture the current test name in execution
+    """
+    pytest.current_test = item.nodeid
+    yield

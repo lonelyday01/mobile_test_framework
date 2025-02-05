@@ -1,8 +1,6 @@
 import pytest
-import slash
 from pages.calculator_page import CalculatorPage
 
-#@slash.use_fixtures(["driver"])
 def test_press_individual_buttons(driver):
     """
     Test pressing individual buttons on the calculator.
@@ -18,7 +16,6 @@ def test_press_individual_buttons(driver):
     result = calculator_page.get_result()
     assert result == "12", f"Expected 12, but got {result}"
 
-#@slash.use_fixtures(["driver"])
 def test_clear_calculator(driver):
     """
     Test clearing the calculator.

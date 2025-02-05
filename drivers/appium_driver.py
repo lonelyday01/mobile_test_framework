@@ -1,8 +1,11 @@
+from venv import logger
+
 import yaml
 import json
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
 from utils.system_utils import SystemUtils
+from utils.logger import Logger
 
 
 class AppiumDriverManagerError(Exception):
@@ -32,11 +35,15 @@ class AppiumDriverManager:
         """
         self.config = self.load_yaml("config/appium_config.yaml")
         self.devices = self.load_json("config/device_config.json")["devices"]
+
         # Get device automatically if device index isn't provided
         if device_index is None:
             self.device = self.get_device_from_adb()
         else:
             self.device = self.devices[device_index]
+        self.device_name = self.device["deviceName"]
+        self.logger = Logger.setup_logger(device_name=self.device_name)
+        self.logger.info(f"Initializing AppiumDriver Manager for {application}")
         self.application = self.config["applications"][application]
         if not self.application:
             raise AppiumDriverManagerError(f"Application '{application}' not found in appium_config.yaml")
@@ -106,6 +113,7 @@ class AppiumDriverManager:
         dict
             Merged dictionary of capabilities.
         """
+        self.logger.debug("Setting up capabilities")
         capabilities = self.config["capabilities"].copy()
         capabilities.update(self.device)
         capabilities.update(self.application)
