@@ -4,7 +4,9 @@ Common system wrappers
 """
 import platform
 import subprocess
-import os
+import yaml
+import json
+
 
 class SystemUtilsError(Exception):
     """
@@ -81,3 +83,62 @@ class SystemUtils:
             return "Android Debug Bridge" in output
         except RuntimeError:
             return False
+
+    @staticmethod
+    def get_device_from_adb():
+        """
+        Detects connected devices via ADB and selects the first one available.
+
+        Returns
+        -------
+        dict
+            The device configuration dictionary.
+        """
+        configured_devices = SystemUtils.load_json("config/device_config.json")["devices"]
+        connected_devices = SystemUtils.list_adb_devices()
+        if not connected_devices:
+            raise SystemUtilsError("No devices found via adb")
+
+        print(f"Johanny flag: {connected_devices}")
+
+        for device in configured_devices:
+            print(f"{device=}")
+            if device["deviceName"] in connected_devices:
+                return device
+        raise SystemUtilsError("No matchin device found in device_config.json")
+
+    @staticmethod
+    def load_yaml(path):
+        """
+        Loads a YAML configuration file.
+
+        Parameters
+        ----------
+        path : str
+            Path to the YAML file.
+
+        Returns
+        -------
+        dict
+            Parsed YAML file as a dictionary.
+        """
+        with open(path, "r") as f:
+            return yaml.safe_load(f)
+
+    @staticmethod
+    def load_json(path):
+        """
+        Loads a JSON configuration file.
+
+        Parameters
+        ----------
+        path : str
+            Path to the JSON file.
+
+        Returns
+        -------
+        dict
+            Parsed JSON file as a dictionary.
+        """
+        with open(path, "r") as f:
+            return json.load(f)

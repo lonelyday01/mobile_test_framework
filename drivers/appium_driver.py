@@ -1,6 +1,4 @@
-from venv import logger
-
-import yaml
+import os
 import json
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
@@ -33,76 +31,44 @@ class AppiumDriverManager:
         application : str, optional
             Name of the application to test, as defined in `appium_config.yaml` (default is "calculator").
         """
-        self.config = self.load_yaml("config/appium_config.yaml")
-        self.devices = self.load_json("config/device_config.json")["devices"]
-
+        self.config = SystemUtils.load_yaml("config/appium_config.yaml")
+        self.devices = SystemUtils.load_json("config/device_config.json")["devices"]
+        self.logger = Logger.get_logger()
         # Get device automatically if device index isn't provided
         if device_index is None:
-            self.device = self.get_device_from_adb()
+            self.device = SystemUtils.get_device_from_adb()
         else:
             self.device = self.devices[device_index]
         self.device_name = self.device["deviceName"]
-        self.logger = Logger.setup_logger(device_name=self.device_name)
+
         self.logger.info(f"Initializing AppiumDriver Manager for {application}")
         self.application = self.config["applications"][application]
         if not self.application:
             raise AppiumDriverManagerError(f"Application '{application}' not found in appium_config.yaml")
         self.capabilities =  self.set_capabilities()
+        self.save_capabilities(self.capabilities)
         self.driver = None
         self._options = UiAutomator2Options().load_capabilities(self.capabilities)
 
 
-    def load_yaml(self, path):
+
+    def save_capabilities(self, capabilities):
         """
-        Loads a YAML configuration file.
+       Saves the device capabilities to a JSON file in the execution folder.
 
-        Parameters
-        ----------
-        path : str
-            Path to the YAML file.
+       Parameters
+       ----------
+       capabilities : dict
+           The capabilities of the WebDriver session.
+       """
+        execution_folder = Logger.EXECUTION_DIR
+        os.makedirs(execution_folder, exist_ok=True)
 
-        Returns
-        -------
-        dict
-            Parsed YAML file as a dictionary.
-        """
-        with open(path, "r") as f:
-            return yaml.safe_load(f)
+        capabilities_path = os.path.join(execution_folder, "device_capabilities.json")
+        with open(capabilities_path, "w") as f:
+            json.dump(capabilities, f, indent=4)
 
-    def load_json(self, path):
-        """
-        Loads a JSON configuration file.
-
-        Parameters
-        ----------
-        path : str
-            Path to the JSON file.
-
-        Returns
-        -------
-        dict
-            Parsed JSON file as a dictionary.
-        """
-        with open(path, "r") as f:
-            return json.load(f)
-
-    def get_device_from_adb(self):
-        """
-        Detects connected devices via ADB and selects the first one available.
-
-        Returns
-        -------
-        dict
-            The device configuration dictionary.
-        """
-        devices = SystemUtils.list_adb_devices()
-        if not devices:
-            raise AppiumDriverManagerError("No devices found via adb")
-
-        for device in self.devices:
-            if device["deviceName"] in devices:
-                return device
-        raise AppiumDriverManagerError("No matchin device found in device_config.json")
+        self.logger.info(f"Device capabilities saved to {capabilities_path}")
 
     def set_capabilities(self):
         """
@@ -113,10 +79,11 @@ class AppiumDriverManager:
         dict
             Merged dictionary of capabilities.
         """
-        self.logger.debug("Setting up capabilities")
+        self.logger.info("Setting up capabilities")
         capabilities = self.config["capabilities"].copy()
         capabilities.update(self.device)
         capabilities.update(self.application)
+        self.logger.debug(f"Capabilities: {capabilities}")
         return capabilities
 
     @property
@@ -141,6 +108,7 @@ class AppiumDriverManager:
             The initialized Appium WebDriver instance.
         """
         try:
+            self.logger.info(f"Starting WebDriver: {self.config["server"]["full_server_path"]}")
             self.driver = webdriver.Remote(command_executor=self.config["server"]["full_server_path"],
                                            options=self.options
             )
@@ -158,6 +126,7 @@ class AppiumDriverManager:
             If the driver fails to stop properly.
         """
         try:
+            self.logger.info(f"Stopping WebDriver: {self.config["server"]["full_server_path"]}")
             self.driver.quit()
         except Exception as e:
             raise AppiumDriverManagerError("Unable to stop driver") from e

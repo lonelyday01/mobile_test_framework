@@ -1,8 +1,10 @@
+import json
 import logging
 import os
 import datetime
 import inspect
 import pytest
+
 
 class Logger:
     """
@@ -12,6 +14,10 @@ class Logger:
     BASE_REPORT_DIR = "reports/"
     STACK_IGNORE_LIST = ["pytest", "conftest",  "fixture", "__init__", "runner"]
     SUITE_DIR = None
+    LOG_DIR = None
+    EXECUTION_DIR = None
+    _logger = None
+
     @classmethod
     def get_execution_name(cls):
         """
@@ -27,7 +33,6 @@ class Logger:
 
         stack = inspect.stack()
         test_name = None
-        test_file = None
 
         for frame in stack:
             if (frame.function.startswith("test_") and
@@ -37,18 +42,6 @@ class Logger:
 
         if test_name:
             return test_name
-
-        for frame in stack:
-            if (
-                "tests" in frame.filename and frame.filename.endswith(".py") and
-                not any(ignored in frame.filename for ignored in cls.STACK_IGNORE_LIST)
-            ):
-                test_file = os.path.basename(frame.filename).replace(".py", "")
-                break
-        if test_file:
-            return test_file
-
-        return "test_suite"
 
     @classmethod
     def setup_execution_folder(cls, device_name="unknown_device"):
@@ -99,6 +92,8 @@ class Logger:
         logging.logger
             Configurated logger instance.
         """
+        if cls._logger:
+            return cls._logger
 
         cls.setup_execution_folder(device_name=device_name)
         log_file = os.path.join(cls.LOG_DIR, "execution.log")
@@ -127,7 +122,18 @@ class Logger:
         logger.addHandler(file_handler)
         logger.addHandler(console_handler)
 
+        cls._logger = logger
+
         return logger
+
+    @classmethod
+    def get_logger(cls):
+        """
+        Returns the configurated logger, else returns an exception if the logger is not configurated before
+        """
+        if not cls._logger:
+            raise ValueError("Logger isn't configurated")
+        return cls._logger
 
     @classmethod
     def capture_screenshot(cls, driver, test_name):
@@ -143,3 +149,4 @@ class Logger:
 
         screenshot_path = os.path.join(cls.SCREENSHOT_DIR, f"{test_name}.png")
         driver.save_screenshot(screenshot_path)
+

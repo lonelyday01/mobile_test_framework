@@ -75,7 +75,6 @@ class CalculatorLocators:
         }
         if operator not in operator_map:
             raise CalculatorLocatorsError(f"Invalid operator: {operator}. Allowed: +, -, *, /, =, C")
-        print(f"Johanny's flag: {cls.BASE_BTN_ID.format(button=operator_map[operator])}")
         return AppiumBy.ID, cls.BASE_BTN_ID.format(button=operator_map[operator])
 
     @classmethod
