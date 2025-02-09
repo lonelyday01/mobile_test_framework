@@ -8,31 +8,28 @@ class Logger:
     Logger utility for the automation framework
     Creates a separate directoryu for each test execution.
     """
-    _logger = None
+    _loggers = {}
 
     @classmethod
-    def setup_logger(cls, name="framework_logger", device_name="unknown-device"):
+    def setup_logger(cls, test_name):
         """
         Sets up the logger configuration
 
         Parameters
         ----------
-        name : str
-            The name of the logger (default is 'Framework_logger')
-        device_name : str
-            The name of the device to execute the test suite
+        test_name : str
+            The name of the test being executed.
 
         Returns
         ----------
         logging.logger
             Configurated logger instance.
         """
-        if cls._logger:
-            return cls._logger
+        if test_name in cls._loggers:
+            return cls._loggers[test_name]
 
-        FileManager.setup_suite_folder(device_name=device_name)
-        log_file = os.path.join(FileManager.LOG_DIR, "execution.log")
-        logger = logging.getLogger(name)
+        log_file = os.path.join(FileManager.LOG_DIR, f"{test_name}.log")
+        logger = logging.getLogger(test_name)
 
         if logger.hasHandlers():
             logger.handlers.clear()

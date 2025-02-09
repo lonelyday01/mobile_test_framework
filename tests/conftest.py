@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from drivers.appium_driver import AppiumDriverManager
 
 @pytest.fixture(scope="function")
-def driver():
+def driver(request):
     """
     Fixture to initialize and return an Appium WebDriver instance.
     Ensures proper setup and teardown of the driver.
@@ -21,9 +21,12 @@ def driver():
     WebDriver
         The initialized Appium WebDriver instance.
     """
-    device_name = SystemUtils.get_device_from_adb()["deviceName"]
+    test_name = request.node.name
+
+    # Setup execution folder to save results
     FileManager.setup_execution_folder()
-    Logger.setup_logger(device_name=device_name)
+    Logger.setup_logger(test_name=test_name)
+
     driver_manager = AppiumDriverManager(application="calculator")
     driver_instance = driver_manager.start_driver()
     yield driver_instance
@@ -35,7 +38,6 @@ def pytest_runtest_protocol(item):
     Hook to capture the current test name in execution
     """
     pytest.current_test = item.nodeid
-    # print(f"Johanny's debug: {item.nodeid}")
     yield
 
 @pytest.hookimpl(tryfirst=True)
@@ -49,6 +51,7 @@ def pytest_configure(config):
     device_name = SystemUtils.get_device_from_adb()["deviceName"]
     FileManager.setup_suite_folder(device_name=device_name)
     suite_dir = FileManager.SUITE_DIR
+
     # define the destination paths
     json_report_path = os.path.join(suite_dir, "test_report.json")
     html_report_path = os.path.join(suite_dir, "test_report.html")
