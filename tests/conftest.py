@@ -1,19 +1,15 @@
-import logging
-import shutil
-import time
-
 import pytest
 import sys
 import os
 
 from utils.logger import Logger
 from utils.system_utils import SystemUtils
+from utils.file_manager import FileManager
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from drivers.appium_driver import AppiumDriverManager
 
-logger= logging.getLogger(__name__)
 @pytest.fixture(scope="function")
 def driver():
     """
@@ -25,6 +21,9 @@ def driver():
     WebDriver
         The initialized Appium WebDriver instance.
     """
+    device_name = SystemUtils.get_device_from_adb()["deviceName"]
+    FileManager.setup_execution_folder()
+    Logger.setup_logger(device_name=device_name)
     driver_manager = AppiumDriverManager(application="calculator")
     driver_instance = driver_manager.start_driver()
     yield driver_instance
@@ -36,6 +35,7 @@ def pytest_runtest_protocol(item):
     Hook to capture the current test name in execution
     """
     pytest.current_test = item.nodeid
+    # print(f"Johanny's debug: {item.nodeid}")
     yield
 
 @pytest.hookimpl(tryfirst=True)
@@ -45,9 +45,10 @@ def pytest_configure(config):
     It is used to dynamically configure the output path of the reports,
     using the device name obtained from AppiumDriverManager.
     """
+
     device_name = SystemUtils.get_device_from_adb()["deviceName"]
-    Logger.setup_logger(device_name=device_name)
-    suite_dir = Logger.SUITE_DIR
+    FileManager.setup_suite_folder(device_name=device_name)
+    suite_dir = FileManager.SUITE_DIR
     # define the destination paths
     json_report_path = os.path.join(suite_dir, "test_report.json")
     html_report_path = os.path.join(suite_dir, "test_report.html")

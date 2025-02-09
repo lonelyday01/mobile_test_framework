@@ -6,7 +6,9 @@ import platform
 import subprocess
 import yaml
 import json
+import os
 
+from utils.file_manager import FileManager
 
 class SystemUtilsError(Exception):
     """
@@ -142,3 +144,18 @@ class SystemUtils:
         """
         with open(path, "r") as f:
             return json.load(f)
+
+    @classmethod
+    def capture_screenshot(cls, driver, test_name):
+        """
+        Captures a screenshot and saves it in the execution folder
+
+        driver: WebDriver
+            the active driver instance.
+
+        test_name : str
+            The name of each test case.
+        """
+
+        screenshot_path = os.path.join(FileManager.SCREENSHOT_DIR, f"{test_name}.png")
+        driver.save_screenshot(screenshot_path)

@@ -2,6 +2,8 @@ import os
 import json
 from appium import webdriver
 from appium.options.android import UiAutomator2Options
+
+from utils.file_manager import FileManager
 from utils.system_utils import SystemUtils
 from utils.logger import Logger
 
@@ -61,7 +63,7 @@ class AppiumDriverManager:
        capabilities : dict
            The capabilities of the WebDriver session.
        """
-        execution_folder = Logger.EXECUTION_DIR
+        execution_folder = FileManager.EXECUTION_DIR
         os.makedirs(execution_folder, exist_ok=True)
 
         capabilities_path = os.path.join(execution_folder, "device_capabilities.json")

@@ -1,0 +1,11 @@
+{
+    "platformName": "Android",
+    "deviceName": "ZY226F4R27",
+    "appPackage": "com.google.android.calculator",
+    "appActivity": "com.android.calculator2.Calculator",
+    "automationName": "UiAutomator2",
+    "platformVersion": "10.0",
+    "osName": "Android",
+    "isPhysicalDevice": true,
+    "noReset": false
+}
