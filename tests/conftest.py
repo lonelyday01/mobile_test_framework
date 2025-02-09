@@ -5,10 +5,11 @@ import os
 from utils.logger import Logger
 from utils.system_utils import SystemUtils
 from utils.file_manager import FileManager
+from drivers.appium_driver import AppiumDriverManager
+
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from drivers.appium_driver import AppiumDriverManager
 
 @pytest.fixture(scope="function")
 def driver(request):
@@ -32,6 +33,7 @@ def driver(request):
     yield driver_instance
     driver_manager.stop_driver()
 
+
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_protocol(item):
     """
@@ -39,6 +41,7 @@ def pytest_runtest_protocol(item):
     """
     pytest.current_test = item.nodeid
     yield
+
 
 @pytest.hookimpl(tryfirst=True)
 def pytest_configure(config):

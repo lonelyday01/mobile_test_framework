@@ -1,10 +1,12 @@
 from pages.base_page import BasePage
 from pages.locators.calculator_locators import CalculatorLocators
 
+
 class CalculatorPageError(Exception):
     """
     Custom exception for CalculatorPage errors.
     """
+
 
 class CalculatorPage(BasePage):
     """

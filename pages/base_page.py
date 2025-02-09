@@ -1,17 +1,16 @@
-from appium.webdriver.common.appiumby import AppiumBy
-
 class BasePageError(Exception):
     """
     Custom exception for BasePage errors.
     Used to handle specific issues related with the elements intaction
     """
 
+
 class BasePage:
     """
     Base class for all page in the app
     Provides common methods or interactin with elements
     """
-    def  __init__(self, driver):
+    def __init__(self, driver):
         """
         initializes the base page with a WebDriver instance.
 
@@ -41,7 +40,7 @@ class BasePage:
         """
         return self.driver.find_element(locator_type, locator_value)
 
-    def click(self,  locator_type, locator_value):
+    def click(self, locator_type, locator_value):
         """
         Clicks an element.
 

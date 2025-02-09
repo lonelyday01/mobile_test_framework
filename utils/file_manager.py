@@ -3,18 +3,20 @@ import datetime
 import pytest
 import inspect
 
+
 class FileManagerError(Exception):
     """
     Custom exception for FileManager errors.
     Used to handle specific issues related to framework structure
     """
 
+
 class FileManager:
     BASE_REPORT_DIR = "reports/"
     SUITE_DIR = None
     LOG_DIR = None
     EXECUTION_DIR = None
-    STACK_IGNORE_LIST = ["pytest", "conftest",  "fixture", "__init__", "runner"]
+    STACK_IGNORE_LIST = ["pytest", "conftest", "fixture", "__init__", "runner"]
 
     @classmethod
     def get_execution_name(cls):
@@ -33,8 +35,8 @@ class FileManager:
         test_name = None
 
         for frame in stack:
-            if (frame.function.startswith("test_") and
-                    not any(ignored in frame.function or ignored in frame.filename for ignored in cls.STACK_IGNORE_LIST)):
+            if (frame.function.startswith("test_") and not
+                    any(ignored in frame.function or ignored in frame.filename for ignored in cls.STACK_IGNORE_LIST)):
                 test_name = frame.function
                 break
         print(f"Johanny's flag1: {test_name=}")
@@ -48,8 +50,6 @@ class FileManager:
         """
         Creates necessary directories for the test execution.
         """
-
-
         test_name = cls.get_execution_name()
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         cls.EXECUTION_DIR = os.path.join(cls.SUITE_DIR, f"{test_name}-{timestamp}")

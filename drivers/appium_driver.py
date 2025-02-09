@@ -47,12 +47,10 @@ class AppiumDriverManager:
         self.application = self.config["applications"][application]
         if not self.application:
             raise AppiumDriverManagerError(f"Application '{application}' not found in appium_config.yaml")
-        self.capabilities =  self.set_capabilities()
+        self.capabilities = self.set_capabilities()
         self.save_capabilities(self.capabilities)
         self.driver = None
         self._options = UiAutomator2Options().load_capabilities(self.capabilities)
-
-
 
     def save_capabilities(self, capabilities):
         """
@@ -112,8 +110,7 @@ class AppiumDriverManager:
         try:
             self.logger.info(f"Starting WebDriver: {self.config["server"]["full_server_path"]}")
             self.driver = webdriver.Remote(command_executor=self.config["server"]["full_server_path"],
-                                           options=self.options
-            )
+                                           options=self.options)
             return self.driver
         except Exception as e:
             raise AppiumDriverManagerError("Unable to start driver") from e

@@ -1,9 +1,11 @@
 from appium.webdriver.common.appiumby import AppiumBy
 
+
 class CalculatorLocatorsError(Exception):
     """
     Custom exception for CalculatorLocators errors.
     """
+
 
 class CalculatorLocators:
     """

@@ -10,18 +10,19 @@ import os
 
 from utils.file_manager import FileManager
 
+
 class SystemUtilsError(Exception):
     """
     Custom exception for SystemUtilsError errors.
     Used to handle specific issues related to system utils execution.
     """
 
+
 class SystemUtils:
     """
     A wrapper class to execute system commands across different platforms (Windows, Mac, Linux).
     Also provides utilities for ADB commands.
     """
-
     @staticmethod
     def get_os():
         """

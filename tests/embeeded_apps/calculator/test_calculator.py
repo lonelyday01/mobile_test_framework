@@ -1,5 +1,5 @@
-import pytest
 from pages.calculator_page import CalculatorPage
+
 
 def test_press_individual_buttons(driver):
     """
@@ -15,6 +15,7 @@ def test_press_individual_buttons(driver):
 
     result = calculator_page.get_result()
     assert result == "12", f"Expected 12, but got {result}"
+
 
 def test_clear_calculator(driver):
     """
